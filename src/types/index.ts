@@ -24,6 +24,16 @@ export interface Submission {
   score?: number;
 }
 
+export interface Appointment {
+  id: string;
+  patientName: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  appointmentType: string;
+  notes: string;
+  status: "upcoming" | "done";
+}
+
 export type UserDoc = Omit<User, "id"> & {
   password: string;
 };
@@ -33,3 +43,16 @@ export type SubmissionDoc = Omit<Submission, "id" | "studentId"> & {
 };
 
 export type NewSubmissionBody = Pick<Submission, "courseCode" | "repoUrl">;
+
+export type AppointmentDoc = Omit<Appointment, "id"> & {
+  userId: Types.ObjectId;
+};
+
+export type NewAppointmentBody = Pick<
+  Appointment,
+  | "patientName"
+  | "appointmentDate"
+  | "appointmentTime"
+  | "appointmentType"
+  | "notes"
+> & Partial<Pick<Appointment, "status">>;

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express, {
   type Request,
   type Response,
@@ -7,11 +8,27 @@ import cors from "cors";
 import mongoose from "mongoose";
 import { authRouter } from "./routes/auth";
 import { submissionRouter } from "./routes/submissions";
+import { appointmentRouter } from "./routes/appointments";
+import { connectDB } from "./config/db";
 
 export const app = express();
 
-app.use(cors());
+const allowedOrigins = (process.env.CORS_ORIGIN ?? "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter((origin) => origin !== "");
+
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
+
+app.use(async (_req: Request, _res: Response, next: NextFunction) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 app.get("/api/health", (_req: Request, res: Response) => {
   res.json({ ok: true, db: mongoose.connection.readyState === 1 });
@@ -19,6 +36,7 @@ app.get("/api/health", (_req: Request, res: Response) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/submissions", submissionRouter);
+app.use("/api/appointments", appointmentRouter);
 
 app.use((req: Request, res: Response) => {
   res.status(404).json({
@@ -47,3 +65,5 @@ app.use(
     res.status(500).json({ message: "Something went wrong" });
   },
 );
+
+export default app;

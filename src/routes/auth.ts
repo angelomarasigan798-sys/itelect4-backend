@@ -1,8 +1,13 @@
-import { Router, type Request, type Response } from "express";
+import {
+  Router,
+  type Request,
+  type Response,
+} from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { User } from "../models/User";
 import type { TokenPayload } from "../middleware/auth";
+import { asyncRoute } from "../middleware/asyncRoute";
 
 export const authRouter = Router();
 
@@ -19,7 +24,7 @@ interface LoginBody {
 
 authRouter.post(
   "/register",
-  async (
+  asyncRoute(async (
     req: Request<unknown, unknown, RegisterBody>,
     res: Response,
   ) => {
@@ -34,12 +39,12 @@ authRouter.post(
 
     const user = await User.create({ name, email, password });
     res.status(201).json(user.toJSON());
-  },
+  }),
 );
 
 authRouter.post(
   "/login",
-  async (
+  asyncRoute(async (
     req: Request<unknown, unknown, LoginBody>,
     res: Response,
   ) => {
@@ -60,5 +65,5 @@ authRouter.post(
     });
 
     res.json({ token, user: user.toJSON() });
-  },
+  }),
 );

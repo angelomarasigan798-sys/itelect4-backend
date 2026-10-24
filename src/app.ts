@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import { authRouter } from "./routes/auth";
 import { submissionRouter } from "./routes/submissions";
 import { appointmentRouter } from "./routes/appointments";
+import { aiRouter } from "./routes/ai";
 import { connectDB } from "./config/db";
 
 export const app = express();
@@ -37,6 +38,7 @@ app.get("/api/health", (_req: Request, res: Response) => {
 app.use("/api/auth", authRouter);
 app.use("/api/submissions", submissionRouter);
 app.use("/api/appointments", appointmentRouter);
+app.use("/api/ai", aiRouter);
 
 app.use((req: Request, res: Response) => {
   res.status(404).json({

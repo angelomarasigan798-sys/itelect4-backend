@@ -1,6 +1,7 @@
-import { Router, type Request, type Response, type NextFunction, type RequestHandler } from "express";
+import { Router, type Request } from "express";
 import { AppointmentModel } from "../models/Appointment";
 import { requireAuth } from "../middleware/auth";
+import { asyncRoute } from "../middleware/asyncRoute";
 import type { NewAppointmentBody } from "../types/index";
 
 export const appointmentRouter = Router();
@@ -10,12 +11,6 @@ appointmentRouter.use(requireAuth);
 interface IdParam {
   id: string;
 }
-
-const asyncRoute = (
-  handler: (req: Request, res: Response) => Promise<void>,
-): RequestHandler => (req, res, next: NextFunction) => {
-  void handler(req, res).catch(next);
-};
 
 appointmentRouter.get(
   "/",
